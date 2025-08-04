@@ -1,0 +1,139 @@
+{
+  "permissions": {
+    "allow": [
+      "*",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(/etc/webmin/restart)",
+      "Bash(curl:*)",
+      "Bash(/etc/webmin/stop:*)",
+      "Bash(rm:*)",
+      "Bash(/usr/libexec/webmin/setup.sh --batch --host=192.168.0.58 --port=10000 --ssl --nouninstall --nostart)",
+      "Bash(apk add:*)",
+      "Bash(cp:*)",
+      "Bash(/etc/webmin/start)",
+      "Bash(npm search:*)",
+      "Bash(npx -y @smithery/cli install perplexity-mcp --client claude)",
+      "Bash(npm install:*)",
+      "mcp__perplexity-mcp__search",
+      "Bash(chmod:*)",
+      "Bash(mkdir:*)",
+      "Bash(python3:*)",
+      "Bash(pip3 install:*)",
+      "Bash(source:*)",
+      "Bash(pip install:*)",
+      "Bash(apk search:*)",
+      "Bash(pdftotext:*)",
+      "Bash(tree:*)",
+      "Bash(docker inspect:*)",
+      "Bash(docker restart:*)",
+      "Bash(docker logs:*)",
+      "Bash(grep:*)",
+      "Bash(env)",
+      "Bash(systemctl:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(docker-compose:*)",
+      "Bash(ssh:*)",
+      "Bash(sudo systemctl restart:*)",
+      "Bash(service ssh:*)",
+      "Bash(ss:*)",
+      "Bash(iptables:*)",
+      "Bash(ufw status:*)",
+      "Bash(hostname:*)",
+      "Bash(docker stop:*)",
+      "Bash(docker run:*)",
+      "Bash(telnet:*)",
+      "Bash(nc:*)",
+      "Bash(cat:*)"
+    ],
+    "deny": []
+  }
+}{
+  "mcpServers": {
+    "ha-server-filesystem": {
+      "command": "npx",
+      "args": [
+        "@createlex/mcp-server-fetch",
+        "http://192.168.0.58:8001/mcp"
+      ],
+      "description": "Home Automation Server Filesystem MCP Server - shared for MyCoder, Blackbox.ai, and Gemini",
+      "capabilities": [
+        "read_file",
+        "write_file",
+        "list_directory",
+        "create_directory"
+      ]
+    },
+    "ha-server-git": {
+      "command": "npx",
+      "args": [
+        "@createlex/mcp-server-fetch",
+        "http://192.168.0.58:8002/mcp"
+      ],
+      "description": "Home Automation Server Git MCP Server - shared for MyCoder, Blackbox.ai, and Gemini",
+      "capabilities": [
+        "git_status",
+        "git_add",
+        "git_commit",
+        "git_log",
+        "git_diff"
+      ]
+    },
+    "ha-server-terminal": {
+      "command": "npx",
+      "args": [
+        "@createlex/mcp-server-fetch",
+        "http://192.168.0.58:8003/mcp"
+      ],
+      "description": "Home Automation Server Terminal MCP Server - shared for MyCoder, Blackbox.ai, and Gemini",
+      "capabilities": [
+        "run_command",
+        "list_processes",
+        "get_environment",
+        "change_directory"
+      ]
+    },
+    "ha-server-database": {
+      "command": "npx",
+      "args": [
+        "@createlex/mcp-server-fetch",
+        "http://192.168.0.58:8004/mcp"
+      ],
+      "description": "Home Automation Server Database MCP Server - shared for MyCoder, Blackbox.ai, and Gemini",
+      "capabilities": [
+        "database_operations",
+        "sql_queries",
+        "data_management"
+      ]
+    },
+    "ha-server-perplexity": {
+      "command": "npx",
+      "args": [
+        "@createlex/mcp-server-fetch",
+        "http://192.168.0.58:8005/mcp"
+      ],
+      "description": "Home Automation Server Perplexity MCP Server - shared for MyCoder, Blackbox.ai, and Gemini",
+      "capabilities": [
+        "web_search",
+        "research",
+        "information_retrieval"
+      ]
+    },
+    "perplexity-web-bridge": {
+      "command": "curl",
+      "args": [
+        "-X", "POST",
+        "http://192.168.0.58:8006/v1/chat/completions",
+        "-H", "Content-Type: application/json"
+      ],
+      "description": "Perplexity Pro Web Bridge - LLM API proxy pro MyCoder, gemini-cli a Blackbox.ai",
+      "capabilities": [
+        "chat_completions",
+        "claude_3_5_sonnet",
+        "gpt_4_turbo",
+        "gpt_4o",
+        "openai_compatible_api"
+      ]
+    }
+  }
+}

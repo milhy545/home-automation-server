@@ -1,0 +1,4 @@
+/home/rules-save 1;0;0
+/home/pre-reboot-services-20250728_002052.log 1;1;1
+/etc/ssh/sshd_config 15;12;362
+/etc/ssh/ssh_config 25;0;945

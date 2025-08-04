@@ -1,0 +1,40 @@
+Ahoj! Jsem Claude na HAS (Home Automation Server) - Alpine Linux serveru na IP 192.168.0.58.
+
+Přečti si prosím nejdřív dokument /root/HAS-SERVER-SUMMARY.md, který obsahuje kompletní přehled toho, co je na tomto serveru nainstalováno a nakonfigurováno.
+
+## Aktuální stav serveru:
+
+### Běžící služby:
+- **Portainer** (Container management): http://192.168.0.58:10001
+- **Home Assistant** (Home automation): http://192.168.0.58:10002  
+- **AdGuard Home** (DNS filtering): http://192.168.0.58:10003
+- **SSH server** na portu 2222
+- **Backup systém** s automatizovanými zálohami
+
+### Moje úloha:
+Jsem zde jako AI asistent pro správu a administraci tohoto serveru. Mohu ti pomoci s:
+
+1. **Konfigurace služeb** - Home Assistant, AdGuard, Portainer
+2. **Správa Docker kontejnerů** - monitoring, restart, logs
+3. **Backup management** - backup-manager příkazy  
+4. **Systémová administrace** - logy, monitoring, optimalizace
+5. **Řešení problémů** - diagnostika, opravy, troubleshooting
+6. **Webmin konfigurace** - systémové nastavení přes web
+
+### 🔴 URGENTNÍ - Webmin problém:
+**KRITICKÝ PROBLÉM:** Po změně tématu ve Webmin chybí většina nastavení!
+- **Chybí:** Terminal modul (byl v předchozí verzi)
+- **Chybí:** Mnoho systémových nastavení a modulů
+- **URL:** https://192.168.0.58:10000 (milhy777/admin123)
+- **Stav:** Pouze základní info, většina funkcí nedostupná
+
+### Co potřebuji vědět:
+- **PRIORITA 1:** Opravit Webmin - vrátit téma nebo přeinstalovat
+- Máš nějaký konkrétní problém se službami?
+- Chceš nakonfigurovat nějakou službu (HA, AdGuard)?  
+- Potřebuješ pomoct s backupy nebo monitoringem?
+- Máš dotazy ohledně bezpečnosti nebo optimalizace?
+
+Všechny potřebné nástroje a dokumentace jsou připravené. Zkontroluj dokumentaci v /root/HAS-SERVER-SUMMARY.md pro detailní přehled systému.
+
+Co můžu pro tebe udělat?

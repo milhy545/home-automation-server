@@ -1,0 +1,46 @@
+# Personal data and databases
+*.db
+*.sqlite
+*.sqlite3
+.claude.json*
+.zsh_history
+.bash_history
+.ssh/
+.gnupg/
+
+# Memory and session data
+*memory*
+*session*
+zen_coordinator_memory.db
+
+# Cache and temporary files
+.cache/
+.npm/
+__pycache__/
+*.pyc
+.venv/
+venv/
+node_modules/
+
+# Logs with potentially sensitive data
+*.log
+logs/
+
+# Docker data volumes
+/data/
+/mnt/
+
+# Backup files that might contain sensitive data
+*backup*.tar.gz
+*backup*.zip
+*.backup
+
+# Environment files with secrets
+.env
+*.env
+
+# SSH and GPG keys
+id_rsa*
+id_ed25519*
+*.key
+*.pem

@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  litellm:
+    container_name: litellm-perplexity
+    image: ghcr.io/berriai/litellm:main-latest
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./litellm-config.yaml:/app/config.yaml
+    command: ["--config", "/app/config.yaml", "--port", "4000", "--host", "0.0.0.0"]
+    environment:
+      - PERPLEXITYAI_API_KEY=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
+      - LITELLM_LOG=DEBUG
+    restart: unless-stopped
+    networks:
+      - perplexity-ha
+
+  redis:
+    container_name: litellm-redis
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - perplexity-ha
+
+networks:
+  perplexity-ha:
+    driver: bridge

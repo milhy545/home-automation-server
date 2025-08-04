@@ -1,0 +1,26 @@
+[
+  {
+    "content": "Backup current Webmin settings",
+    "status": "completed",
+    "priority": "high",
+    "id": "1"
+  },
+  {
+    "content": "Reset Webmin to default configuration",
+    "status": "completed",
+    "priority": "high",
+    "id": "2"
+  },
+  {
+    "content": "Setup Perplexity MCP from prompt file",
+    "status": "completed",
+    "priority": "medium",
+    "id": "3"
+  },
+  {
+    "content": "Test Webmin after reset",
+    "status": "completed",
+    "priority": "medium",
+    "id": "4"
+  }
+]

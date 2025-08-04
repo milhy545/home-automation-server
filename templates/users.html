@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block title %}Uživatelé - WebDAV Uploader{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Správa uživatelů</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+            <i class="bi bi-person-plus"></i> Přidat uživatele
+        </button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5><i class="bi bi-people"></i> Registrovaní uživatelé</h5>
+        <span class="badge bg-primary">{{ users|length }} uživatelů</span>
+    </div>
+    <div class="card-body">
+        {% if users %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th><i class="bi bi-person"></i> Uživatel</th>
+                        <th><i class="bi bi-envelope"></i> Email</th>
+                        <th><i class="bi bi-shield"></i> Role</th>
+                        <th><i class="bi bi-power"></i> Status</th>
+                        <th><i class="bi bi-calendar"></i> Vytvořen</th>
+                        <th><i class="bi bi-clock"></i> Poslední přihlášení</th>
+                        <th><i class="bi bi-tools"></i> Akce</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>
+                            <strong>{{ user[0] }}</strong>
+                            {% if user[0] == session.username %}
+                                <span class="badge bg-info">Vy</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ user[1] or 'Nenastaveno' }}</td>
+                        <td>
+                            {% if user[2] %}
+                                <span class="badge bg-danger">Admin</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Uživatel</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user[3] %}
+                                <span class="badge bg-success">Aktivní</span>
+                            {% else %}
+                                <span class="badge bg-warning">Deaktivován</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <small class="text-muted">{{ user[4][:10] if user[4] else 'N/A' }}</small>
+                        </td>
+                        <td>
+                            {% if user[5] %}
+                                <small class="text-muted">{{ user[5][:16] }}</small>
+                            {% else %}
+                                <span class="text-muted">Nikdy</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <button type="button" class="btn btn-outline-primary" 
+                                        onclick="editUser('{{ user[0] }}')">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                {% if user[0] != session.username %}
+                                <button type="button" class="btn btn-outline-warning" 
+                                        onclick="toggleUser('{{ user[0] }}', {{ user[3] }})">
+                                    {% if user[3] %}
+                                        <i class="bi bi-pause"></i>
+                                    {% else %}
+                                        <i class="bi bi-play"></i>
+                                    {% endif %}
+                                </button>
+                                <button type="button" class="btn btn-outline-danger" 
+                                        onclick="deleteUser('{{ user[0] }}')">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+            <i class="bi bi-people fs-1 text-muted"></i>
+            <h5 class="mt-3 text-muted">Žádní uživatelé</h5>
+            <p class="text-muted">Zatím nejsou registrováni žádní uživatelé.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal pro přidání uživatele -->
+<div class="modal fade" id="addUserModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Přidat nového uživatele</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="addUserForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="new_username" class="form-label">Uživatelské jméno</label>
+                        <input type="text" class="form-control" id="new_username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="new_email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_password" class="form-label">Heslo</label>
+                        <input type="password" class="form-control" id="new_password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_password_confirm" class="form-label">Potvrdit heslo</label>
+                        <input type="password" class="form-control" id="new_password_confirm" required>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="new_is_admin">
+                        <label class="form-check-label" for="new_is_admin">
+                            Admin práva
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zrušit</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-person-plus"></i> Přidat uživatele
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal pro editaci uživatele -->
+<div class="modal fade" id="editUserModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Upravit uživatele</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="editUserForm">
+                <div class="modal-body">
+                    <input type="hidden" id="edit_username">
+                    <div class="mb-3">
+                        <label for="edit_email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="edit_email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_password" class="form-label">Nové heslo (nechte prázdné pro zachování)</label>
+                        <input type="password" class="form-control" id="edit_password">
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="edit_is_admin">
+                        <label class="form-check-label" for="edit_is_admin">
+                            Admin práva
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zrušit</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Uložit změny
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Přidání uživatele
+document.getElementById('addUserForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    let username = document.getElementById('new_username').value;
+    let email = document.getElementById('new_email').value;
+    let password = document.getElementById('new_password').value;
+    let passwordConfirm = document.getElementById('new_password_confirm').value;
+    let isAdmin = document.getElementById('new_is_admin').checked;
+    
+    // Validace
+    if (password !== passwordConfirm) {
+        alert('Hesla se neshodují!');
+        return;
+    }
+    
+    if (password.length < 6) {
+        alert('Heslo musí mít alespoň 6 znaků!');
+        return;
+    }
+    
+    // TODO: Implementovat vytvoření uživatele
+    alert(`✅ Uživatel bude vytvořen:\nJméno: ${username}\nEmail: ${email}\nAdmin: ${isAdmin ? 'Ano' : 'Ne'}`);
+    
+    // Zavření modalu
+    let modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+    modal.hide();
+    
+    // Reset formuláře
+    this.reset();
+});
+
+// Editace uživatele
+function editUser(username) {
+    document.getElementById('edit_username').value = username;
+    
+    // TODO: Načíst data uživatele z API/databáze
+    
+    let modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+    modal.show();
+}
+
+document.getElementById('editUserForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    let username = document.getElementById('edit_username').value;
+    let email = document.getElementById('edit_email').value;
+    let password = document.getElementById('edit_password').value;
+    let isAdmin = document.getElementById('edit_is_admin').checked;
+    
+    // TODO: Implementovat update uživatele
+    alert(`✅ Uživatel bude upraven:\nJméno: ${username}\nEmail: ${email}\nAdmin: ${isAdmin ? 'Ano' : 'Ne'}`);
+    
+    let modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+    modal.hide();
+});
+
+// Toggle aktivace uživatele
+function toggleUser(username, isActive) {
+    let action = isActive ? 'deaktivovat' : 'aktivovat';
+    
+    if (confirm(`Opravdu chcete ${action} uživatele ${username}?`)) {
+        // TODO: Implementovat toggle status
+        alert(`✅ Uživatel ${username} bude ${action}ován`);
+        location.reload();
+    }
+}
+
+// Smazání uživatele
+function deleteUser(username) {
+    if (confirm(`Opravdu chcete smazat uživatele ${username}?\nTato akce je nevratná!`)) {
+        // TODO: Implementovat delete uživatele
+        alert(`🗑️ Uživatel ${username} bude smazán`);
+        location.reload();
+    }
+}
+</script>
+{% endblock %}

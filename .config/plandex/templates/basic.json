@@ -1,0 +1,14 @@
+{
+  "name": "basic",
+  "description": "Basic project template",
+  "files": [
+    "README.md",
+    "main.py",
+    "requirements.txt"
+  ],
+  "structure": {
+    "src/": "Source code directory",
+    "tests/": "Test files directory", 
+    "docs/": "Documentation directory"
+  }
+}

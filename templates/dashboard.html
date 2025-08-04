@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - WebDAV Uploader{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Dashboard</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="refreshStatus()">
+                <i class="bi bi-arrow-clockwise"></i> Obnovit
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Status karty -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card card-metric">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title text-muted">API Server</h6>
+                        <h4 id="api-status" class="mb-0">
+                            {% if api_status.status == 'online' %}
+                                <span class="badge bg-success">Online</span>
+                            {% elif api_status.status == 'error' %}
+                                <span class="badge bg-warning">Chyba</span>
+                            {% else %}
+                                <span class="badge bg-danger">Offline</span>
+                            {% endif %}
+                        </h4>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-server fs-2 text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card card-metric">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title text-muted">Aktivní uživatelé</h6>
+                        <h4 class="mb-0">{{ stats.active_users }}</h4>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-people fs-2 text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card card-metric">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title text-muted">Přihlášení dnes</h6>
+                        <h4 class="mb-0">{{ stats.logins_today }}</h4>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-box-arrow-in-right fs-2 text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card card-metric">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title text-muted">Uploady dnes</h6>
+                        <h4 class="mb-0">{{ stats.uploads_today }}</h4>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-upload fs-2 text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- API Status detail -->
+{% if api_status.status == 'online' and api_status.data %}
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-info-circle"></i> API Server Info</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Status:</dt>
+                    <dd class="col-sm-8"><span class="badge bg-success">{{ api_status.data.status }}</span></dd>
+                    
+                    <dt class="col-sm-4">Verze:</dt>
+                    <dd class="col-sm-8">{{ api_status.data.version }}</dd>
+                    
+                    <dt class="col-sm-4">Čas:</dt>
+                    <dd class="col-sm-8">{{ api_status.data.timestamp }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-speedometer2"></i> Rychlé akce</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('upload') }}" class="btn btn-primary">
+                        <i class="bi bi-upload"></i> Nahrát soubor
+                    </a>
+                    <a href="{{ url_for('files') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-files"></i> Spravovat soubory
+                    </a>
+                    <a href="{{ url_for('settings') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-gear"></i> Nastavení
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Chybový stav -->
+{% if api_status.status != 'online' %}
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-warning">
+            <h5><i class="bi bi-exclamation-triangle"></i> API Server není dostupný</h5>
+            <p>Status: <strong>{{ api_status.status }}</strong></p>
+            {% if api_status.message %}
+            <p>Chyba: <code>{{ api_status.message }}</code></p>
+            {% endif %}
+            <hr>
+            <p class="mb-0">
+                Zkontrolujte, zda běží WebDAV API server na portu 5000:
+                <code>python3 /root/webdav_uploader.py</code>
+            </p>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+function refreshStatus() {
+    fetch('/api/status')
+        .then(response => response.json())
+        .then(data => {
+            let statusElement = document.getElementById('api-status');
+            let badgeClass = 'bg-danger';
+            let statusText = 'Offline';
+            
+            if (data.status === 'online') {
+                badgeClass = 'bg-success';
+                statusText = 'Online';
+            } else if (data.status === 'error') {
+                badgeClass = 'bg-warning';
+                statusText = 'Chyba';
+            }
+            
+            statusElement.innerHTML = `<span class="badge ${badgeClass}">${statusText}</span>`;
+            
+            // Obnovení stránky po 2 sekundách pokud se status změnil
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+// Auto-refresh každých 30 sekund
+setInterval(refreshStatus, 30000);
+</script>
+{% endblock %}

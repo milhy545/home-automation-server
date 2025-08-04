@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  litellm-simple:
+    container_name: litellm-simple
+    image: ghcr.io/berriai/litellm:main-latest
+    ports:
+      - "4000:4000"
+    environment:
+      - PERPLEXITY_API_KEY=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
+    command: [
+      "--model", "perplexity/sonar-pro",
+      "--port", "4000",
+      "--host", "0.0.0.0"
+    ]
+    restart: unless-stopped

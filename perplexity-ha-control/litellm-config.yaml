@@ -1,0 +1,13 @@
+model_list:
+  - model_name: perplexity-pro
+    litellm_params:
+      model: perplexity/sonar-pro
+      api_key: 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
+      
+  - model_name: perplexity-reasoning
+    litellm_params:
+      model: perplexity/sonar-reasoning-pro  
+      api_key: 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
+
+general_settings:
+  completion_model: perplexity-pro

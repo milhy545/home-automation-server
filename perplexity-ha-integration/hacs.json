@@ -1,0 +1,10 @@
+{
+  "name": "Perplexity AI Assistant",
+  "content_in_root": false,
+  "zip_release": true,
+  "filename": "perplexity.zip",
+  "hide_default_branch": true,
+  "render_readme": true,
+  "domains": ["perplexity"],
+  "homeassistant": "2023.1.0"
+}

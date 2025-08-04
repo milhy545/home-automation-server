@@ -1,0 +1,64 @@
+ask_question:
+  name: Ask Question
+  description: Ask a question to Perplexity AI
+  fields:
+    question:
+      name: Question
+      description: The question to ask
+      required: true
+      selector:
+        text:
+          multiline: true
+    entity_id:
+      name: Target Entity
+      description: The Perplexity sensor entity to update (optional)
+      required: false
+      selector:
+        entity:
+          domain: sensor
+          integration: perplexity
+    model:
+      name: Model
+      description: Override the default model for this request
+      required: false
+      selector:
+        select:
+          options:
+            - "sonar"
+            - "sonar-pro"
+            - "sonar-reasoning"
+            - "sonar-deep-research"
+    temperature:
+      name: Temperature
+      description: Override the default temperature (0.0-2.0)
+      required: false
+      selector:
+        number:
+          min: 0.0
+          max: 2.0
+          step: 0.1
+    max_tokens:
+      name: Max Tokens
+      description: Override the default max tokens
+      required: false
+      selector:
+        number:
+          min: 10
+          max: 4000
+          step: 10
+
+set_model:
+  name: Set Model
+  description: Change the default model for future requests
+  fields:
+    model:
+      name: Model
+      description: The model to use
+      required: true
+      selector:
+        select:
+          options:
+            - "sonar"
+            - "sonar-pro" 
+            - "sonar-reasoning"
+            - "sonar-deep-research"

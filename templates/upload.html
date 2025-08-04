@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Upload - WebDAV Uploader{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Nahrávání souborů</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-upload"></i> Nahrát soubor</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                    <div class="mb-3">
+                        <label for="file" class="form-label">Vyberte soubor</label>
+                        <input type="file" class="form-control" id="file" name="file" required>
+                        <div class="form-text">
+                            Podporované formáty: PDF, DOC, XLS, PPT, TXT, MD, JSON, XML, CSV, obrázky (PNG, JPG, GIF)
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="path" class="form-label">Cesta (volitelně)</label>
+                        <input type="text" class="form-control" id="path" name="path" placeholder="/subfolder">
+                        <div class="form-text">
+                            Relativní cesta v WebDAV serveru. Nechte prázdné pro root složku.
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" id="uploadBtn">
+                        <i class="bi bi-upload"></i> Nahrát soubor
+                    </button>
+                    
+                    <div class="progress mt-3" style="display: none;" id="uploadProgress">
+                        <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-info-circle"></i> Informace</h5>
+            </div>
+            <div class="card-body">
+                <h6>Podporované formáty:</h6>
+                <ul class="list-unstyled">
+                    <li><i class="bi bi-file-text"></i> Dokumenty: PDF, DOC, DOCX</li>
+                    <li><i class="bi bi-file-spreadsheet"></i> Tabulky: XLS, XLSX</li>
+                    <li><i class="bi bi-file-slides"></i> Prezentace: PPT, PPTX</li>
+                    <li><i class="bi bi-file-code"></i> Text: TXT, MD, JSON, XML, CSV</li>
+                    <li><i class="bi bi-file-image"></i> Obrázky: PNG, JPG, JPEG, GIF</li>
+                </ul>
+                
+                <hr>
+                
+                <h6>Omezení:</h6>
+                <ul class="list-unstyled">
+                    <li><i class="bi bi-hdd"></i> Max. velikost: 50 MB</li>
+                    <li><i class="bi bi-shield-check"></i> Bezpečnostní kontrola</li>
+                    <li><i class="bi bi-clock"></i> Timeout: 30 sekund</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5><i class="bi bi-lightbulb"></i> Tipy</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li><i class="bi bi-folder"></i> Použijte "/" pro separaci složek</li>
+                    <li><i class="bi bi-file-earmark"></i> Názvy souborů jsou automaticky sanitizovány</li>
+                    <li><i class="bi bi-cloud-upload"></i> Soubory se nahrávají přímo do WebDAV</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('uploadForm').addEventListener('submit', function(e) {
+    let uploadBtn = document.getElementById('uploadBtn');
+    let uploadProgress = document.getElementById('uploadProgress');
+    
+    // Zobrazení progress baru
+    uploadProgress.style.display = 'block';
+    uploadBtn.disabled = true;
+    uploadBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Nahrávání...';
+    
+    // Simulace progress (skutečný progress by vyžadoval AJAX)
+    let progress = 0;
+    let interval = setInterval(function() {
+        progress += 10;
+        document.querySelector('.progress-bar').style.width = progress + '%';
+        
+        if (progress >= 90) {
+            clearInterval(interval);
+        }
+    }, 200);
+});
+
+// Validace souboru
+document.getElementById('file').addEventListener('change', function(e) {
+    let file = e.target.files[0];
+    if (file) {
+        let maxSize = 50 * 1024 * 1024; // 50MB
+        if (file.size > maxSize) {
+            alert('Soubor je příliš velký! Maximum je 50 MB.');
+            e.target.value = '';
+            return;
+        }
+        
+        let allowedTypes = [
+            'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx',
+            'txt', 'md', 'json', 'xml', 'csv',
+            'png', 'jpg', 'jpeg', 'gif'
+        ];
+        
+        let fileExt = file.name.split('.').pop().toLowerCase();
+        if (!allowedTypes.includes(fileExt)) {
+            alert('Nepodporovaný typ souboru!');
+            e.target.value = '';
+            return;
+        }
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,38 @@
+[
+  {
+    "content": "Research Perplexity HA integration methods",
+    "status": "completed",
+    "priority": "high",
+    "id": "1"
+  },
+  {
+    "content": "Set up LiteLLM proxy container",
+    "status": "completed",
+    "priority": "high",
+    "id": "2"
+  },
+  {
+    "content": "Configure Home LLM integration in HA",
+    "status": "pending",
+    "priority": "high",
+    "id": "3"
+  },
+  {
+    "content": "Create smart home control functions",
+    "status": "completed",
+    "priority": "high",
+    "id": "4"
+  },
+  {
+    "content": "Set up voice command automation",
+    "status": "pending",
+    "priority": "medium",
+    "id": "5"
+  },
+  {
+    "content": "Test and demo the complete system",
+    "status": "completed",
+    "priority": "high",
+    "id": "6"
+  }
+]

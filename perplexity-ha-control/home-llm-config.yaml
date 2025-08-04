@@ -1,0 +1,57 @@
+# Home LLM Configuration for Perplexity
+# Přidej do /opt/homeassistant/config/configuration.yaml
+
+llm:
+  - platform: openai_compatible
+    name: "Perplexity via LiteLLM"
+    api_key: "dummy-key"  # LiteLLM nepotřebuje klíč
+    base_url: "http://192.168.0.58:4000/v1"
+    model: "perplexity-pro"
+    context_length: 32000
+    max_tokens: 1000
+    temperature: 0.7
+    top_p: 1.0
+
+conversation:
+  - platform: openai_compatible
+    name: "Perplexity Smart Home"
+    llm: "Perplexity via LiteLLM"
+    system_prompt: |
+      You are a smart home assistant controlling Home Assistant.
+      
+      COMMANDS YOU CAN EXECUTE:
+      - light.turn_on / light.turn_off
+      - switch.turn_on / switch.turn_off  
+      - climate.set_temperature
+      - media_player.play_media
+      - automation.trigger
+      
+      RESPONSE FORMAT:
+      Always respond in Czech and execute the requested action.
+      
+      EXAMPLES:
+      User: "Rozsvit světla v obýváku"
+      You: "Rozsvěcujem světla v obýváku" + call service light.turn_on
+      
+      User: "Jaká je teplota?"
+      You: Check sensor.temperature and respond with current value
+      
+      Be helpful, friendly, and always confirm what you did.
+    
+# Automation pro voice triggering
+automation:
+  - alias: "Perplexity Voice Control"
+    description: "Voice control via Perplexity Assistant"
+    trigger:
+      - platform: conversation
+        command: ["Perplexity {query}", "Hej Perplexity {query}"]
+    action:
+      - service: conversation.process
+        data:
+          agent_id: conversation.perplexity_smart_home
+          text: "{{ trigger.slots.query.value }}"
+        response_variable: response
+      - service: tts.google_translate_say
+        data:
+          entity_id: media_player.living_room
+          message: "{{ response.response.speech.plain.speech }}"

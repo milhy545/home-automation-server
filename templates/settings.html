@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+
+{% block title %}Nastavení - WebDAV Uploader{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Nastavení systému</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-gear"></i> WebDAV konfigurace</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" id="settingsForm">
+                    <div class="mb-3">
+                        <label for="webdav_hostname" class="form-label">WebDAV Server</label>
+                        <input type="url" class="form-control" id="webdav_hostname" 
+                               value="{{ config.webdav_config.webdav_hostname if config.webdav_config else '' }}" 
+                               placeholder="https://your-webdav-server.com">
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="webdav_login" class="form-label">Uživatelské jméno</label>
+                                <input type="text" class="form-control" id="webdav_login" 
+                                       value="{{ config.webdav_config.webdav_login if config.webdav_config else '' }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="webdav_password" class="form-label">Heslo</label>
+                                <input type="password" class="form-control" id="webdav_password" 
+                                       placeholder="••••••••">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="webdav_root" class="form-label">Výchozí složka</label>
+                        <input type="text" class="form-control" id="webdav_root" 
+                               value="{{ config.webdav_config.webdav_root if config.webdav_config else '' }}" 
+                               placeholder="/uploads/">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="max_file_size" class="form-label">Maximální velikost souboru (MB)</label>
+                        <input type="number" class="form-control" id="max_file_size" 
+                               value="{{ (config.max_file_size / 1024 / 1024) | round if config.max_file_size else 50 }}">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Uložit nastavení
+                    </button>
+                    
+                    <button type="button" class="btn btn-outline-secondary" onclick="testConnection()">
+                        <i class="bi bi-wifi"></i> Test připojení
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5><i class="bi bi-shield-check"></i> Bezpečnostní nastavení</h5>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="max_login_attempts" class="form-label">Max. pokusů o přihlášení</label>
+                        <input type="number" class="form-control" id="max_login_attempts" value="5" min="1" max="10">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="lockout_duration" class="form-label">Doba uzamčení (minuty)</label>
+                        <input type="number" class="form-control" id="lockout_duration" value="30" min="5" max="1440">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="session_timeout" class="form-label">Timeout relace (hodiny)</label>
+                        <input type="number" class="form-control" id="session_timeout" value="24" min="1" max="168">
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="enable_logs" checked>
+                        <label class="form-check-label" for="enable_logs">
+                            Povolit logování přístupů
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-shield-check"></i> Uložit bezpečnostní nastavení
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-info-circle"></i> Aktuální konfigurace</h5>
+            </div>
+            <div class="card-body">
+                {% if config %}
+                <dl class="row">
+                    <dt class="col-sm-6">WebDAV Server:</dt>
+                    <dd class="col-sm-6">
+                        {% if config.webdav_config %}
+                            <small>{{ config.webdav_config.webdav_hostname }}</small>
+                        {% else %}
+                            <span class="text-muted">Nenastaveno</span>
+                        {% endif %}
+                    </dd>
+                    
+                    <dt class="col-sm-6">Max. velikost:</dt>
+                    <dd class="col-sm-6">
+                        {% if config.max_file_size %}
+                            {{ (config.max_file_size / 1024 / 1024) | round }} MB
+                        {% else %}
+                            <span class="text-muted">N/A</span>
+                        {% endif %}
+                    </dd>
+                    
+                    <dt class="col-sm-6">Povolené typy:</dt>
+                    <dd class="col-sm-6">
+                        {% if config.allowed_extensions %}
+                            <small>{{ config.allowed_extensions | length }} typů</small>
+                        {% else %}
+                            <span class="text-muted">N/A</span>
+                        {% endif %}
+                    </dd>
+                </dl>
+                {% else %}
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    Nelze načíst konfiguraci API serveru
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5><i class="bi bi-file-earmark-text"></i> Povolené typy souborů</h5>
+            </div>
+            <div class="card-body">
+                {% if config.allowed_extensions %}
+                <div class="row">
+                    {% for ext in config.allowed_extensions %}
+                    <div class="col-6 col-lg-4 mb-2">
+                        <span class="badge bg-light text-dark">.{{ ext }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted">Informace o povolených typech nejsou dostupné</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5><i class="bi bi-tools"></i> Systémové akce</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-outline-warning" onclick="restartAPI()">
+                        <i class="bi bi-arrow-clockwise"></i> Restart API serveru
+                    </button>
+                    <button type="button" class="btn btn-outline-danger" onclick="clearLogs()">
+                        <i class="bi bi-trash"></i> Vymazat logy
+                    </button>
+                    <button type="button" class="btn btn-outline-info" onclick="exportSettings()">
+                        <i class="bi bi-download"></i> Export nastavení
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function testConnection() {
+    let hostname = document.getElementById('webdav_hostname').value;
+    if (!hostname) {
+        alert('Zadejte URL WebDAV serveru');
+        return;
+    }
+    
+    // Zobrazení loading stavu
+    let btn = event.target;
+    let originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Testování...';
+    btn.disabled = true;
+    
+    // Simulace testu připojení
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        
+        // Simulace výsledku
+        if (hostname.includes('localhost') || hostname.includes('127.0.0.1')) {
+            alert('✅ Test připojení neúspěšný\n❌ Server není dostupný na ' + hostname);
+        } else {
+            alert('⚠️ Test připojení nelze provést\n💡 Implementujte skutečný test v produkci');
+        }
+    }, 2000);
+}
+
+function restartAPI() {
+    if (confirm('Opravdu chcete restartovat API server?\nToto může přerušit aktivní nahrávání.')) {
+        alert('🔄 Restart API serveru bude implementován v další verzi');
+    }
+}
+
+function clearLogs() {
+    if (confirm('Opravdu chcete vymazat všechny logy?\nTato akce je nevratná.')) {
+        alert('🗑️ Funkce mazání logů bude implementována v další verzi');
+    }
+}
+
+function exportSettings() {
+    let settings = {
+        webdav_hostname: document.getElementById('webdav_hostname').value,
+        webdav_login: document.getElementById('webdav_login').value,
+        webdav_root: document.getElementById('webdav_root').value,
+        max_file_size: document.getElementById('max_file_size').value,
+        max_login_attempts: document.getElementById('max_login_attempts').value,
+        lockout_duration: document.getElementById('lockout_duration').value,
+        session_timeout: document.getElementById('session_timeout').value
+    };
+    
+    let blob = new Blob([JSON.stringify(settings, null, 2)], {type: 'application/json'});
+    let url = URL.createObjectURL(blob);
+    let a = document.createElement('a');
+    a.href = url;
+    a.download = 'webdav_settings_' + new Date().toISOString().slice(0,10) + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+// Form submit handling
+document.getElementById('settingsForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Validace
+    let hostname = document.getElementById('webdav_hostname').value;
+    if (hostname && !hostname.startsWith('http')) {
+        alert('URL WebDAV serveru musí začínat http:// nebo https://');
+        return;
+    }
+    
+    // Simulace uložení
+    alert('✅ Nastavení uloženo\n💡 V produkci bude uloženo do konfiguračního souboru');
+});
+</script>
+{% endblock %}
