@@ -1,8 +1,15 @@
-# 🏠 Home Automation Server Configuration
+# 🏠 Home Automation Server Configuration / Konfigurace Domácí Automatizace
 
-> **Production Server**: `192.168.0.58:2222` - Complete infrastructure as code
+---
+🇬🇧 **English** | 🇨🇿 **Česky**
+---
 
-This repository contains the complete configuration and codebase for a production home automation server running on Alpine Linux. The server orchestrates 15+ Docker services and provides a comprehensive AI-integrated smart home platform.
+> **Production Server**: `192.168.0.58:2222` - Complete infrastructure as code  
+> **Produkční Server**: `192.168.0.58:2222` - Kompletní infrastruktura jako kód
+
+**English**: This repository contains the complete configuration and codebase for a production home automation server running on Alpine Linux. The server orchestrates 15+ Docker services and provides a comprehensive AI-integrated smart home platform.
+
+**Česky**: Tento repozitář obsahuje kompletní konfiguraci a kódovou základnu pro produkční server domácí automatizace běžící na Alpine Linux. Server orchestruje 15+ Docker služeb a poskytuje komplexní AI-integrovanou platformu smart home.
 
 ## 🏗️ **Architecture Overview**
 
