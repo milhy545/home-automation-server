@@ -1,0 +1,109 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9, 3.10, 3.11]
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        if [ -f perplexity-ha-integration/requirements_test.txt ]; then pip install -r perplexity-ha-integration/requirements_test.txt; fi
+    
+    - name: Run Perplexity Integration Tests
+      run: |
+        cd perplexity-ha-integration
+        python -m pytest tests/ -v --tb=short
+    
+    - name: Run System Tests
+      run: |
+        python test_perplexity_key.py
+        python test_webdav_uploader.py
+    
+    - name: Test FEI Components
+      run: |
+        cd fei
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        python -m pytest tests/ -v --tb=short
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Run Security Scan
+      uses: github/super-linter@v4
+      env:
+        DEFAULT_BRANCH: main
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        VALIDATE_PYTHON: true
+        VALIDATE_BASH: true
+        VALIDATE_DOCKERFILE: true
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Build Docker Images
+      run: |
+        if [ -f Dockerfile ]; then
+          docker build -t home-automation-server:${{ github.sha }} .
+        fi
+        
+        # Build individual service containers
+        for dir in */; do
+          if [ -f "$dir/Dockerfile" ]; then
+            docker build -t "${dir%/}:${{ github.sha }}" "$dir"
+          fi
+        done
+
+  deployment-check:
+    runs-on: ubuntu-latest
+    needs: [test, security]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Validate Configuration Files
+      run: |
+        # Check Docker Compose files
+        if [ -f docker-compose.yml ]; then
+          docker-compose config
+        fi
+        
+        # Validate JSON configurations
+        find . -name "*.json" -exec python -m json.tool {} \; > /dev/null
+    
+    - name: Documentation Check
+      run: |
+        # Ensure README files exist and are properly formatted
+        if [ ! -f README.md ]; then
+          echo "ERROR: README.md missing"
+          exit 1
+        fi
+        
+        # Check for dual-language headers
+        if ! grep -q "🇬🇧.*🇨🇿" README.md; then
+          echo "WARNING: Dual-language header missing"
+        fi

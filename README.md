@@ -1,5 +1,10 @@
 # 🏠 Home Automation Server Configuration / Konfigurace Domácí Automatizace
 
+[![CI/CD Pipeline](https://github.com/milhy545/home-automation-server/actions/workflows/ci.yml/badge.svg)](https://github.com/milhy545/home-automation-server/actions/workflows/ci.yml)
+[![Security Scan](https://img.shields.io/badge/security-scanned-green)](https://github.com/milhy545/home-automation-server/security)
+[![Docker](https://img.shields.io/badge/docker-ready-blue)](https://github.com/milhy545/home-automation-server)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 ---
 🇬🇧 **English** | 🇨🇿 **Česky**
 ---
@@ -11,7 +16,13 @@
 
 **Česky**: Tento repozitář obsahuje kompletní konfiguraci a kódovou základnu pro produkční server domácí automatizace běžící na Alpine Linux. Server orchestruje 15+ Docker služeb a poskytuje komplexní AI-integrovanou platformu smart home.
 
-## 🏗️ **Architecture Overview**
+## 🏗️ **Architecture Overview** / **Přehled Architektury**
+
+### **🇬🇧 English Description**
+Complete home automation infrastructure running on Alpine Linux with 15+ Docker services, AI integration, and comprehensive smart home management capabilities.
+
+### **🇨🇿 Český Popis**  
+Kompletní infrastruktura domácí automatizace běžící na Alpine Linux s 15+ Docker službami, AI integrací a komplexními možnostmi správy smart home.
 
 ### **Server Specifications**
 - **OS**: Alpine Linux (lightweight, security-focused)
