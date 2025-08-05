@@ -1,24 +1,24 @@
-Ahoj! Jsem Claude na HAS serveru a potřebuji nastavit Perplexity MCP server pro rozšíření svých schopností o pokročilé webové vyhledávání a research.
+Hello! I'm Claude on the HAS server and I need to set up Perplexity MCP server to extend my capabilities with advanced web search and research.
 
-## Aktuální situace:
+## Current Situation:
 - **Server:** 192.168.0.58 (Alpine Linux 3.19)
-- **Claude Code CLI:** ✓ Nainstalován a funkční
-- **Existující konfigurace:** `/home/milhy777/Develop/Configuration-Files/mcp_servers_192_168_0_58.json`
+- **Claude Code CLI:** ✓ Installed and functional
+- **Existing Configuration:** `/home/milhy777/Develop/Configuration-Files/mcp_servers_192_168_0_58.json`
 
-## Úkol: Nastavení Perplexity MCP Server
+## Task: Setting up Perplexity MCP Server
 
-### 1. Analýza existující konfigurace
-Nejdřív si přečti existující MCP konfiguraci na hlavním počítači:
+### 1. Analyze existing configuration
+First read the existing MCP configuration from the main computer:
 ```bash
 scp milhy777@192.168.0.50:/home/milhy777/Develop/Configuration-Files/mcp_servers_192_168_0_58.json /tmp/reference-config.json
 ```
 
-### 2. Instalace Perplexity MCP Server
+### 2. Install Perplexity MCP Server
 ```bash
-# Možnost A: NPM instalace (pokud existuje jako package)
+# Option A: NPM installation (if exists as package)
 npm install -g @modelcontextprotocol/server-perplexity
 
-# Možnost B: Ruční instalace z repozitáře
+# Option B: Manual installation from repository
 cd /opt
 git clone https://github.com/modelcontextprotocol/servers.git mcp-servers
 cd mcp-servers/src/perplexity
@@ -26,16 +26,16 @@ npm install
 npm run build
 ```
 
-### 3. Konfigurace API klíče
-Perplexity vyžaduje API klíč:
+### 3. Configure API key
+Perplexity requires API key:
 ```bash
-# Získat Perplexity Pro API klíč z uživatele
+# Get Perplexity Pro API key from user
 echo "export PERPLEXITY_API_KEY=your_api_key_here" >> /etc/environment
 source /etc/environment
 ```
 
-### 4. Vytvoření MCP konfigurace
-Vytvořit `/root/.claude/mcp_servers.json`:
+### 4. Create MCP configuration
+Create `/root/.claude/mcp_servers.json`:
 ```json
 {
   "mcpServers": {
@@ -52,8 +52,8 @@ Vytvořit `/root/.claude/mcp_servers.json`:
 }
 ```
 
-### 5. Alternativní konfigurace (HTTP MCP server)
-Pokud je Perplexity server dostupný jako HTTP service:
+### 5. Alternative configuration (HTTP MCP server)
+If Perplexity server is available as HTTP service:
 ```json
 {
   "mcpServers": {
@@ -65,44 +65,44 @@ Pokud je Perplexity server dostupný jako HTTP service:
 }
 ```
 
-### 6. Testování a ověření
+### 6. Testing and verification
 ```bash
-# Test MCP serveru
+# Test MCP server
 claude-code --mcp-debug
 
-# Ověření funkčnosti Perplexity
-# Spustit Claude a otestovat: "Search for latest AI news using Perplexity"
+# Verify Perplexity functionality
+# Run Claude and test: "Search for latest AI news using Perplexity"
 ```
 
-### 7. Firewall konfigurace (pokud potřeba)
+### 7. Firewall configuration (if needed)
 ```bash
-# Pro HTTP MCP server
+# For HTTP MCP server
 iptables -I INPUT -p tcp --dport 8081 -s 192.168.0.0/24 -j ACCEPT
 iptables-save > /etc/iptables/rules-save
 ```
 
-## Očekávané výsledky:
-Po úspěšném nastavení budu mít přístup k:
-- **Webové vyhledávání** přes Perplexity API
-- **Research capabilities** s citacemi zdrojů
-- **Real-time informace** z webu
-- **Pokročilé AI search** schopnosti
+## Expected Results:
+After successful setup I will have access to:
+- **Web search** via Perplexity API
+- **Research capabilities** with source citations
+- **Real-time information** from the web
+- **Advanced AI search** capabilities
 
-## Řešení problémů:
-- **API klíč:** Zkontrolovat platnost Perplexity Pro subscription
-- **Network:** Ověřit přístup k api.perplexity.ai
-- **Permissions:** Claude Code musí mít oprávnění pro MCP servery
-- **Dependencies:** Node.js a npm musí být správně nakonfigurovány
+## Troubleshooting:
+- **API key:** Check validity of Perplexity Pro subscription
+- **Network:** Verify access to api.perplexity.ai
+- **Permissions:** Claude Code must have permissions for MCP servers
+- **Dependencies:** Node.js and npm must be properly configured
 
-## Priority řešení:
-1. **Získat Perplexity API klíč** od uživatele
-2. **Najít správný Perplexity MCP server** (NPM package nebo GitHub)
-3. **Nakonfigurovat MCP komunikaci** (STDIO vs HTTP)
-4. **Otestovat funkcionalita** s reálnými dotazy
+## Solution Priorities:
+1. **Get Perplexity API key** from user
+2. **Find correct Perplexity MCP server** (NPM package or GitHub)
+3. **Configure MCP communication** (STDIO vs HTTP)
+4. **Test functionality** with real queries
 
-## Poznámky:
-- Perplexity MCP server může být ve vývoji - zkontrolovat dostupnost
-- Alternativně můžu použít přímé Perplexity API calls přes WebFetch
-- Zachovat kompatibilitu s existující MCP infrastrukturou na 192.168.0.58
+## Notes:
+- Perplexity MCP server may be in development - check availability
+- Alternatively I can use direct Perplexity API calls via WebFetch
+- Maintain compatibility with existing MCP infrastructure on 192.168.0.58
 
-Chceš začít s instalací nebo máš Perplexity API klíč připravený?
+Do you want to start with installation or do you have Perplexity API key ready?
